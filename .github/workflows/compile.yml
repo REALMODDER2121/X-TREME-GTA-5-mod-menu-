@@ -1,0 +1,37 @@
+name: Compile GTA 5 SPRX
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies & PS4 Toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make clang llvm lld
+
+    - name: Download and Setup Open Source PS4 SDK
+      run: |
+        git clone https://github.com $HOME/ps4sdk
+        echo "PS4SDK=$HOME/ps4sdk" >> $GITHUB_ENV
+
+    - name: Compile SPRX
+      run: |
+        make
+
+    - name: Upload Finished Mod Menu File
+      uses: actions/upload-artifact@v4
+      with:
+        name: Xtreme-Mod-Menu-127
+        path: |
+          *.sprx
+          *.bin
+          
